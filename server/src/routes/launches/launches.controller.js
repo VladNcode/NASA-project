@@ -1,4 +1,4 @@
-const { getAllLaunches, addNewLaunch } = require('../../models/launches.model');
+const { getAllLaunches, addNewLaunch, cancelLaunch } = require('../../models/launches.model');
 
 const httpGetAllLaunches = function (req, res) {
   // for (value of launches.values()) {
@@ -40,4 +40,12 @@ const httpAddNewLaunch = function (req, res) {
   });
 };
 
-module.exports = { httpGetAllLaunches, httpAddNewLaunch };
+const httpCancelLaunch = (req, res) => {
+  if (!cancelLaunch(req.params.id)) {
+    return res.status(404).json({ error: 'ID not found!' });
+  }
+
+  res.status(200).json(cancelLaunch(req.params.id));
+};
+
+module.exports = { httpGetAllLaunches, httpAddNewLaunch, httpCancelLaunch };

@@ -8,7 +8,7 @@ const launch = {
   rocket: 'Exlporer IS1',
   launchDate: new Date('December 27, 2030'),
   target: 'Kepler-442 b',
-  customer: ['ZTM', 'NASA'],
+  customers: ['ZTM', 'NASA'],
   upcoming: true,
   success: true,
 };
@@ -25,11 +25,26 @@ const addNewLaunch = function (launch) {
     latestFlightNumber,
     Object.assign(launch, {
       flightNumber: latestFlightNumber,
-      customer: ['ZTM', 'NASA'],
+      customers: ['ZTM', 'NASA'],
       upcoming: true,
       success: true,
     })
   );
 };
 
-module.exports = { getAllLaunches, addNewLaunch };
+const cancelLaunch = function (id) {
+  // return launches.delete(+id);
+
+  const aborted = launches.get(+id);
+
+  if (aborted === undefined) {
+    return false;
+  }
+
+  aborted.upcoming = false;
+  aborted.success = false;
+
+  return aborted;
+};
+
+module.exports = { getAllLaunches, addNewLaunch, cancelLaunch };
