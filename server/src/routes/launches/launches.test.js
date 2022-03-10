@@ -9,35 +9,28 @@ describe('Test GET /launches', () => {
 });
 
 describe('Test POST /launches', () => {
+  const launchDataWithoutDate = {
+    mission: 'ZTM155',
+    rocket: 'ZTM Experimental IS1',
+    target: 'Kepler-186f',
+  };
+
   test('It should respond with 201 created', async () => {
     const res = await request(app)
       .post('/launches')
-      .send({
-        mission: 'ZTM155',
-        rocket: 'ZTM Experimental IS1',
-        launchDate: 'January 30, 2030',
-        target: 'Kepler-186f',
-      })
+      .send(Object.assign(launchDataWithoutDate, { launchDate: 'January 30, 2030' }))
       .expect(201);
 
     // expect(res.body.launch).toEqual(
-    //   expect.objectContaining({
-    //     mission: 'ZTM155',
-    //     rocket: 'ZTM Experimental IS1',
-    //     launchDate: '2030-01-29T22:00:00.000Z',
-    //     target: 'Kepler-186f',
-    //   })
+    //   expect.objectContaining(Object.assign(launchDataWithoutDate, { launchDate: '2030-01-29T22:00:00.000Z' }))
     // );
 
     const date = new Date('January 30, 2030').valueOf();
     const resDate = new Date(res.body.launch.launchDate).valueOf();
 
-    expect(res.body.launch).toMatchObject({
-      mission: 'ZTM155',
-      rocket: 'ZTM Experimental IS1',
-      launchDate: '2030-01-29T22:00:00.000Z',
-      target: 'Kepler-186f',
-    });
+    expect(res.body.launch).toMatchObject(
+      Object.assign(launchDataWithoutDate, { launchDate: '2030-01-29T22:00:00.000Z' })
+    );
 
     expect(date).toEqual(resDate);
     expect(res.body.launch.flightNumber).toBe(101);
@@ -46,11 +39,7 @@ describe('Test POST /launches', () => {
   test('It should catch error with missing props', async () => {
     const res = await request(app)
       .post('/launches')
-      .send({
-        mission: 'ZTM155',
-        rocket: 'ZTM Experimental IS1',
-        launchDate: 'January 30, 2030',
-      })
+      .send(Object.assign(launchDataWithoutDate, { launchDate: null }))
       .expect(400);
 
     expect(res.body.error).toBe('Missing launch property!');
@@ -59,12 +48,7 @@ describe('Test POST /launches', () => {
   test('It should catch error with invalid dates', async () => {
     const res = await request(app)
       .post('/launches')
-      .send({
-        mission: 'ZTM155',
-        rocket: 'ZTM Experimental IS1',
-        launchDate: 'Hello',
-        target: 'Kepler-186f',
-      })
+      .send(Object.assign(launchDataWithoutDate, { launchDate: 'Hello' }))
       .expect(400);
 
     expect(res.body.error).toBe('Invalid launchDate!');
