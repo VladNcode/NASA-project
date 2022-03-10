@@ -4,7 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon src/server.js"
+    "start": "nodemon src/server.js",
+    "test": "jest",
+    "test-watch": "jest --watch"
   },
   "keywords": [],
   "author": "",
@@ -13,10 +15,12 @@
     "cors": "^2.8.5",
     "csv-parse": "^5.0.4",
     "express": "^4.17.3",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "supertest": "^6.2.2"
   },
   "devDependencies": {
     "dotenv": "^16.0.0",
+    "jest": "^27.5.1",
     "nodemon": "^2.0.15"
   }
 }
