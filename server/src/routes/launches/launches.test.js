@@ -9,7 +9,7 @@ describe('Test GET /launches', () => {
 });
 
 describe('Test POST /launches', () => {
-  test('It should respond with 201 success', async () => {
+  test('It should respond with 201 created', async () => {
     const res = await request(app)
       .post('/launches')
       .send({
@@ -20,8 +20,29 @@ describe('Test POST /launches', () => {
       })
       .expect(201);
 
+    // expect(res.body.launch).toEqual(
+    //   expect.objectContaining({
+    //     mission: 'ZTM155',
+    //     rocket: 'ZTM Experimental IS1',
+    //     launchDate: '2030-01-29T22:00:00.000Z',
+    //     target: 'Kepler-186f',
+    //   })
+    // );
+
+    const date = new Date('January 30, 2030').valueOf();
+    const resDate = new Date(res.body.launch.launchDate).valueOf();
+
+    expect(res.body.launch).toMatchObject({
+      mission: 'ZTM155',
+      rocket: 'ZTM Experimental IS1',
+      launchDate: '2030-01-29T22:00:00.000Z',
+      target: 'Kepler-186f',
+    });
+
+    expect(date).toEqual(resDate);
     expect(res.body.launch.flightNumber).toBe(101);
   });
+
   test('It should catch error with missing props', async () => {
     const res = await request(app)
       .post('/launches')
@@ -34,6 +55,7 @@ describe('Test POST /launches', () => {
 
     expect(res.body.error).toBe('Missing launch property!');
   });
+
   test('It should catch error with invalid dates', async () => {
     const res = await request(app)
       .post('/launches')
