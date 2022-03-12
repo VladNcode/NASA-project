@@ -1,6 +1,7 @@
 const { parse } = require('csv-parse');
 const fs = require('fs');
 const path = require('path');
+const Planet = require('./planets.mongo');
 
 const planets = [];
 
@@ -13,7 +14,7 @@ const loadPlanetsData = () => {
           columns: true,
         })
       )
-      .on('data', data => {
+      .on('data', async data => {
         if (
           data.koi_disposition === 'CONFIRMED' &&
           data.koi_insol > 0.36 &&
@@ -21,6 +22,18 @@ const loadPlanetsData = () => {
           data.koi_prad < 1.6
         ) {
           planets.push(data);
+
+          await Planet.findOneAndUpdate(
+            { keplerName: data.kepler_name },
+            { keplerName: data.kepler_name },
+            { upsert: true }
+          );
+
+          // const planetExist = await Planet.findOne({ keplerName: data.kepler_name });
+
+          // if (!planetExist) {
+          //   await Planet.create({ keplerName: data.kepler_name });
+          // }
         }
       })
       .on('error', err => {
@@ -34,8 +47,9 @@ const loadPlanetsData = () => {
   });
 };
 
-const getAllPlanets = function () {
-  return planets;
+const getAllPlanets = async function () {
+  return await Planet.find();
+  // return planets;
 };
 
 module.exports = {

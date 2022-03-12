@@ -1,4 +1,5 @@
-const launches = new Map();
+const Launch = require('./launches.mongo');
+// const launches = new Map();
 
 let latestFlightNumber = 100;
 
@@ -13,29 +14,30 @@ const launch = {
   success: true,
 };
 
-launches.set(launch.flightNumber, launch);
+// launches.set(launch.flightNumber, launch);
 
-const getAllLaunches = function () {
-  return Array.from(launches.values());
+const getAllLaunches = async function () {
+  return await Launch.find({});
+  // return Array.from(launches.values());
 };
 
 const addNewLaunch = function (launch) {
   latestFlightNumber++;
-  launches.set(
-    latestFlightNumber,
-    Object.assign(launch, {
-      flightNumber: latestFlightNumber,
-      customers: ['ZTM', 'NASA'],
-      upcoming: true,
-      success: true,
-    })
-  );
+  // launches.set(
+  //   latestFlightNumber,
+  //   Object.assign(launch, {
+  //     flightNumber: latestFlightNumber,
+  //     customers: ['ZTM', 'NASA'],
+  //     upcoming: true,
+  //     success: true,
+  //   })
+  // );
 };
 
 const cancelLaunch = function (id) {
   // return launches.delete(+id);
 
-  const aborted = launches.get(+id);
+  // const aborted = launches.get(+id);
 
   if (aborted === undefined) {
     return false;
