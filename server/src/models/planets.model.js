@@ -3,8 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const Planet = require('./planets.mongo');
 
-const planets = [];
-
 const loadPlanetsData = () => {
   return new Promise((resolve, reject) => {
     fs.createReadStream(path.join(__dirname, '..', '..', 'data', 'kepler_data.csv'))
@@ -21,35 +19,47 @@ const loadPlanetsData = () => {
           data.koi_insol < 1.11 &&
           data.koi_prad < 1.6
         ) {
-          planets.push(data);
-
-          await Planet.findOneAndUpdate(
-            { keplerName: data.kepler_name },
-            { keplerName: data.kepler_name },
-            { upsert: true }
-          );
-
-          // const planetExist = await Planet.findOne({ keplerName: data.kepler_name });
-
-          // if (!planetExist) {
-          //   await Planet.create({ keplerName: data.kepler_name });
-          // }
+          await savePlanet(data);
         }
       })
       .on('error', err => {
         reject(err);
         console.log(err);
       })
-      .on('end', () => {
-        console.log(`Found ${planets.length} habitable planets!`);
+      .on('end', async () => {
+        console.log(`Found ${await countHabitablePlanets()} habitable planets!`);
+
         resolve();
       });
   });
 };
 
 const getAllPlanets = async function () {
-  return await Planet.find();
-  // return planets;
+  try {
+    return await Planet.find();
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const savePlanet = async function (planet) {
+  try {
+    await Planet.findOneAndUpdate(
+      { keplerName: planet.kepler_name },
+      { keplerName: planet.kepler_name },
+      { upsert: true }
+    );
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const countHabitablePlanets = async function () {
+  try {
+    return (await Planet.find()).length;
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 module.exports = {

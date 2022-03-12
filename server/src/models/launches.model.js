@@ -7,7 +7,13 @@ const getAllLaunches = async function () {
 };
 
 const addNewLaunch = async function (launch) {
-  launch.flightNumber = latestFlightNumber++;
+  const lastLaunch = await Launch.findOne().sort('-flightNumber');
+  if (!lastLaunch) {
+    launch.flightNumber = 100;
+  } else {
+    launch.flightNumber = ++lastLaunch.flightNumber;
+  }
+
   await Launch.create(launch);
 };
 
