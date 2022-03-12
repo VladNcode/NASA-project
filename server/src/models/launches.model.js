@@ -1,32 +1,42 @@
 const Launch = require('./launches.mongo');
 
-let latestFlightNumber = 100;
-
 const getAllLaunches = async function () {
-  return await Launch.find({});
+  try {
+    return await Launch.find({});
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 const addNewLaunch = async function (launch) {
-  const lastLaunch = await Launch.findOne().sort('-flightNumber');
-  if (!lastLaunch) {
-    launch.flightNumber = 100;
-  } else {
-    launch.flightNumber = ++lastLaunch.flightNumber;
-  }
+  try {
+    const lastLaunch = await Launch.findOne().sort('-flightNumber');
+    if (!lastLaunch) {
+      launch.flightNumber = 100;
+    } else {
+      launch.flightNumber = ++lastLaunch.flightNumber;
+    }
 
-  await Launch.create(launch);
+    await Launch.create(launch);
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 const cancelLaunch = async function (id) {
-  const launch = await Launch.findOneAndUpdate(
-    { flightNumber: +id },
-    {
-      upcoming: false,
-      success: false,
-    }
-  );
+  try {
+    const launch = await Launch.findOneAndUpdate(
+      { flightNumber: +id },
+      {
+        upcoming: false,
+        success: false,
+      }
+    );
 
-  return launch;
+    return launch;
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 module.exports = { getAllLaunches, addNewLaunch, cancelLaunch };
