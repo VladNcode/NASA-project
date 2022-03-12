@@ -1,14 +1,10 @@
 const { getAllLaunches, addNewLaunch, cancelLaunch } = require('../../models/launches.model');
 
-const httpGetAllLaunches = function (req, res) {
-  // for (value of launches.values()) {
-  //   console.log(value);
-  // }
-  res.status(200).json(getAllLaunches());
-  // res.status(200).json(Object.fromEntries(launches)[100]);
+const httpGetAllLaunches = async function (req, res) {
+  res.status(200).json(await getAllLaunches());
 };
 
-const httpAddNewLaunch = function (req, res) {
+const httpAddNewLaunch = async function (req, res) {
   const { mission, rocket, launchDate, target } = req.body;
 
   if (!mission || !rocket || !launchDate || !target) {
@@ -16,10 +12,6 @@ const httpAddNewLaunch = function (req, res) {
   }
 
   const date = new Date(launchDate);
-
-  // if (date.toString() === 'Invalid Date') {
-  //   return res.status(400).json({ error: 'Invalid launchDate!' });
-  // }
 
   if (isNaN(date)) {
     return res.status(400).json({ error: 'Invalid launchDate!' });
@@ -32,7 +24,7 @@ const httpAddNewLaunch = function (req, res) {
     target,
   };
 
-  addNewLaunch(launch);
+  await addNewLaunch(launch);
 
   res.status(201).json({
     status: 'success',
@@ -40,12 +32,14 @@ const httpAddNewLaunch = function (req, res) {
   });
 };
 
-const httpCancelLaunch = (req, res) => {
-  if (!cancelLaunch(req.params.id)) {
+const httpCancelLaunch = async (req, res) => {
+  const cancel = await cancelLaunch(req.params.id);
+
+  if (!cancel) {
     return res.status(404).json({ error: 'ID not found!' });
   }
 
-  res.status(200).json(cancelLaunch(req.params.id));
+  res.status(200).json(cancel);
 };
 
 module.exports = { httpGetAllLaunches, httpAddNewLaunch, httpCancelLaunch };
