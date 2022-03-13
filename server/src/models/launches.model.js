@@ -2,7 +2,7 @@ const Launch = require('./launches.mongo');
 
 const getAllLaunches = async function () {
   try {
-    return await Launch.find({});
+    return await Launch.find();
   } catch (e) {
     console.error(e);
   }
@@ -26,7 +26,7 @@ const addNewLaunch = async function (launch) {
 const cancelLaunch = async function (id) {
   try {
     const launch = await Launch.findOneAndUpdate(
-      { flightNumber: +id },
+      { flightNumber: id },
       {
         upcoming: false,
         success: false,

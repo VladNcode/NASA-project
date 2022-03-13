@@ -36,7 +36,8 @@ const loadPlanetsData = () => {
 
 const getAllPlanets = async function () {
   try {
-    return await Planet.find();
+    // return await Planet.find({}, '-__v -_id');
+    return await Planet.find().select(['-__v', '-_id']);
   } catch (e) {
     console.error(e);
   }
