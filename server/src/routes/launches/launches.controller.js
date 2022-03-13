@@ -1,4 +1,9 @@
-const { getAllLaunches, addNewLaunch, cancelLaunch } = require('../../models/launches.model');
+const {
+  getAllLaunches,
+  addNewLaunch,
+  cancelLaunch,
+  findOneLaunch,
+} = require('../../models/launches.model');
 
 const httpGetAllLaunches = async function (req, res) {
   res.status(200).json(await getAllLaunches());
@@ -24,11 +29,18 @@ const httpAddNewLaunch = async function (req, res) {
     target,
   };
 
-  await addNewLaunch(launch);
+  const createLaunch = await addNewLaunch(launch);
+
+  if (!createLaunch) {
+    return res.status(400).json({ error: 'Invalid target!' });
+  }
+
+  // remove _id and __v from response
+  const findLaunch = await findOneLaunch(createLaunch.flightNumber);
 
   res.status(201).json({
     status: 'success',
-    launch,
+    launch: findLaunch,
   });
 };
 
