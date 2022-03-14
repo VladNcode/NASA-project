@@ -1,6 +1,7 @@
 const axios = require('axios');
 const Launch = require('./launches.mongo');
 const Planet = require('./planets.mongo');
+const APIFeatures = require('../services/query');
 
 const DEFAULT_FLIGHT_NUMBER = 100;
 const SPACEX_API_URL = 'https://api.spacexdata.com/v4/launches/query';
@@ -36,9 +37,11 @@ const findOneLaunch = async flightNumber => {
   }
 };
 
-const getAllLaunches = async function () {
+const getAllLaunches = async function (qr) {
   try {
-    return await Launch.find().select(['-__v', '-_id']);
+    const features = new APIFeatures(Launch.find({}), qr).filter().sort().limitFields().paginate();
+
+    return await features.query;
   } catch (e) {
     console.error(e);
   }
