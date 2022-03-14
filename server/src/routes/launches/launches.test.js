@@ -29,7 +29,7 @@ describe('Test POST /launches', () => {
 
   test('It should respond with 201 created', async () => {
     const res = await request(app)
-      .post('/launches')
+      .post('/v1/launches')
       .send(Object.assign(launchDataWithoutDate, { launchDate: 'January 30, 2030' }))
       .expect(201);
 
@@ -52,7 +52,7 @@ describe('Test POST /launches', () => {
 
   test('It should catch error with missing props', async () => {
     const res = await request(app)
-      .post('/launches')
+      .post('/v1/launches')
       .send(Object.assign(launchDataWithoutDate, { launchDate: null }))
       .expect(400);
 
@@ -61,7 +61,7 @@ describe('Test POST /launches', () => {
 
   test('It should catch error with invalid dates', async () => {
     const res = await request(app)
-      .post('/launches')
+      .post('/v1/launches')
       .send(Object.assign(launchDataWithoutDate, { launchDate: 'Hello' }))
       .expect(400);
 
@@ -71,15 +71,14 @@ describe('Test POST /launches', () => {
 
 describe('Test GET /launches', () => {
   test('It should respond with 200 success', async () => {
-    const res = await request(app).get('/launches').expect(200);
-
+    const res = await request(app).get('/v1/launches').expect(200);
     expect(res.body[0].flightNumber).toBe(100);
   });
 });
 
 describe('Test GET /planets', () => {
   test('Counting planets', async () => {
-    const res = await request(app).get('/planets').expect(200);
+    const res = await request(app).get('/v1/planets').expect(200);
     expect(res.body.length).toBe(8);
   });
 });
