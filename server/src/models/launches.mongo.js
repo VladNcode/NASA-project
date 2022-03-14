@@ -20,7 +20,7 @@ const launchesSchema = new mongoose.Schema({
   },
   target: {
     type: String,
-    required: [true, 'Please provide a target'],
+    // required: [true, 'Please provide a target'],
   },
   customers: {
     type: [String],
@@ -29,12 +29,10 @@ const launchesSchema = new mongoose.Schema({
   },
   upcoming: {
     type: Boolean,
-    required: true,
     default: true,
   },
   success: {
     type: Boolean,
-    required: true,
     default: true,
   },
 });
