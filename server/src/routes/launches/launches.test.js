@@ -4,7 +4,13 @@ const mongoose = require('mongoose');
 const app = require('../../app');
 const { loadPlanetsData } = require('../../models/planets.model');
 
-const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
+let DB;
+
+if (process.env.NODE_ENV === 'test') {
+  DB = process.env.MONGO_URL;
+} else {
+  DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
+}
 
 mongoose.connection.once('open', () => console.log('Mongoose connection established'));
 mongoose.connection.on('error', err => console.error(err));
