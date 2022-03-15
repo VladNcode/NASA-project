@@ -1,0 +1,5 @@
+*/node_modules
+.git
+server/public
+server/test.env
+server/src/config.env
