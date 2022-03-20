@@ -12,14 +12,16 @@ mongoose.connection.once('open', () => console.log('Mongoose connection establis
 mongoose.connection.on('error', err => console.error(err));
 
 const init = async () => {
-  mongoose.connect(DB);
+  await mongoose.connect(DB);
 
   await loadPlanetsData();
   await loadLaunchData();
 
-  server.listen(port, (req, res) => {
+  server.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
 };
 
-init();
+init().then(() => {
+  console.log('Started...');
+});
