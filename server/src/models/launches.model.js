@@ -48,12 +48,12 @@ const getAllLaunches = async function (qr) {
 };
 
 const addNewLaunch = async function (launch) {
-  try {
-    const targetPlanet = await Planet.findOne({ keplerName: launch.target });
-    if (!targetPlanet) {
-      throw new Error('No matching planet found!');
-    }
+  const targetPlanet = await Planet.findOne({ keplerName: launch.target });
+  if (!targetPlanet) {
+    throw new Error('No matching planet found!');
+  }
 
+  try {
     launch.flightNumber = await incrementFlightNumber();
 
     return await Launch.create(launch);
@@ -64,15 +64,13 @@ const addNewLaunch = async function (launch) {
 
 const cancelLaunch = async function (id) {
   try {
-    const launch = await Launch.findOneAndUpdate(
+    return await Launch.findOneAndUpdate(
       { flightNumber: id },
       {
         upcoming: false,
         success: false,
       }
     );
-
-    return launch;
   } catch (e) {
     console.error(e);
   }
@@ -112,7 +110,7 @@ const fetchSpacexData = async function () {
 };
 
 const firstLaunch = async function () {
-  return await Launch.findOne({
+  return Launch.findOne({
     flight_number: 1,
     rocket: 'Falcon 1',
     name: 'FalconSat',
